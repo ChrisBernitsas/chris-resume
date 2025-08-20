@@ -1,35 +1,67 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, Mail, Phone, Github, Linkedin, ExternalLink, Code, Briefcase, GraduationCap, Award, Zap, Calendar, MapPin, FileText, Users, Lightbulb, TrendingUp, Waves, Battery, Cpu, Eye, Truck, Puzzle, School } from 'lucide-react';
+import { ChevronDown, Mail, Phone, Github, Linkedin, ExternalLink, Code, Briefcase, GraduationCap, Award, Calendar, FileText, Lightbulb, Cpu, Eye, Truck, Puzzle, School } from 'lucide-react';
 
 // Custom Apple logo component
-  const AppleLogo = ({ className }) => (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701z"/>
-    </svg>
-  );
+const AppleLogo = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701z"/>
+  </svg>
+);
 
-  // Custom Water Drop for hydro power
-  const WaterDrop = ({ className }) => (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 2c-4.97 4.97-8 9.03-8 14 0 4.418 3.582 8 8 8s8-3.582 8-8c0-4.97-3.03-9.03-8-14z"/>
-    </svg>
-  );
+// Custom Water Drop for hydro power
+const WaterDrop = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2c-4.97 4.97-8 9.03-8 14 0 4.418 3.582 8 8 8s8-3.582 8-8c0-4.97-3.03-9.03-8-14z"/>
+  </svg>
+);
+
+interface Experience {
+  company: string;
+  role: string;
+  period: string;
+  description: string;
+  tech: string[];
+  color: string;
+  icon: React.ReactNode;
+}
+
+interface Project {
+  name: string;
+  description: string;
+  tech: string[];
+  date: string;
+  color: string;
+  icon: React.ReactNode;
+}
+
+interface Research {
+  title: string;
+  type: string;
+  period: string;
+  description: string;
+  impact: string;
+  tech: string[];
+  color: string;
+}
+
+interface SkillGroup {
+  category: string;
+  items: string[];
+  icon: React.ReactNode;
+}
 
 const ResumeSite = () => {
   const [activeSection, setActiveSection] = useState('hero');
-  const [isVisible, setIsVisible] = useState({});
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
     };
 
     const handleScroll = () => {
-      setScrollY(window.scrollY);
       const sections = ['hero', 'about', 'experience', 'projects', 'research', 'skills'];
       const scrollPosition = window.scrollY + 200;
 
@@ -49,11 +81,11 @@ const ResumeSite = () => {
     };
   }, []);
 
-  const scrollToSection = (sectionId) => {
+  const scrollToSection = (sectionId: string) => {
     document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const experiences = [
+  const experiences: Experience[] = [
     {
       company: "Apple",
       role: "CoreOS Software Developer Intern",
@@ -92,7 +124,7 @@ const ResumeSite = () => {
     }
   ];
 
-  const research = [
+  const research: Research[] = [
     {
       title: "Marine Hydrokinetic Energy Harvester with Multiple VIVACE Oscillators in Synergy",
       type: "Patent Filed",
@@ -113,7 +145,7 @@ const ResumeSite = () => {
     }
   ];
 
-  const projects = [
+  const projects: Project[] = [
     {
       name: "Lip Reading Web Application",
       description: "Developed CNN + Bidirectional LSTM neural network achieving 84% accuracy on validation set for word prediction from video input",
@@ -148,7 +180,7 @@ const ResumeSite = () => {
     }
   ];
 
-  const skills = [
+  const skills: SkillGroup[] = [
     { 
       category: "Programming Languages", 
       items: ["Python", "C/C++", "JavaScript/TypeScript", "SystemVerilog", "x86 Assembly", "Standard ML/OCaml"],
@@ -171,7 +203,7 @@ const ResumeSite = () => {
     }
   ];
 
-  const achievements = [
+  const achievements: string[] = [
     "CMU Electrical & Computer Engineering Dean's List",
     "Top 200 in IMC Prosperity Trading Competition", 
     "Top 100 in Michigan Math Prize Competition",
@@ -184,11 +216,22 @@ const ResumeSite = () => {
     <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white min-h-screen relative overflow-hidden">
       {/* Enhanced animated background */}
       <div className="fixed inset-0 opacity-20">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(59, 130, 246, 0.4) 0%, rgba(34, 197, 94, 0.2) 30%, transparent 70%)`,
-          transition: 'background-image 0.3s ease'
-        }}></div>
-        <div className="absolute inset-0 bg-grid-pattern opacity-30"></div>
+        <div 
+          className="absolute inset-0 transition-all duration-300 ease-out"
+          style={{
+            background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(59, 130, 246, 0.4) 0%, rgba(34, 197, 94, 0.2) 30%, transparent 70%)`
+          }}
+        />
+        <div 
+          className="absolute inset-0 opacity-30"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px'
+          }}
+        />
       </div>
 
       {/* Floating particles effect */}
@@ -275,7 +318,7 @@ const ResumeSite = () => {
         </div>
       </section>
 
-      {/* About Section - Now First */}
+      {/* About Section */}
       <section id="about" className="py-24 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-20">
@@ -357,7 +400,7 @@ const ResumeSite = () => {
         </div>
       </section>
 
-      {/* Research Section - New! */}
+      {/* Research Section */}
       <section id="research" className="py-24 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-20">
@@ -501,15 +544,6 @@ const ResumeSite = () => {
           <p className="text-slate-400 text-lg">© 2025 Chris Bernitsas. Built with Next.js & Tailwind CSS.</p>
         </div>
       </footer>
-
-      <style jsx>{`
-        .bg-grid-pattern {
-          background-image: 
-            linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
-          background-size: 50px 50px;
-        }
-      `}</style>
     </div>
   );
 };
