@@ -1,23 +1,27 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, Mail, Phone, Github, Linkedin, ExternalLink, Code, Briefcase, GraduationCap, Award, Calendar, FileText, Lightbulb, Cpu, Eye, Truck, Puzzle, School } from 'lucide-react';
+import { ChevronDown, Mail, Phone, Github, Linkedin, ExternalLink, Code, Briefcase, GraduationCap, Award, Calendar, FileText, Lightbulb, Cpu, Eye, Truck, Puzzle } from 'lucide-react';
 
-// Custom Apple logo component
-const AppleLogo = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701z"/>
-  </svg>
+// Logo component that uses local images with fallback
+const CompanyLogo = ({ src, alt, className }: { src: string; alt: string; className?: string }) => (
+  <img 
+    src={src} 
+    alt={alt} 
+    className={`${className} object-contain scale-150`}
+    onError={(e) => {
+      // Fallback to a simple text representation if image fails to load
+      const target = e.target as HTMLImageElement;
+      target.style.display = 'none';
+      const parent = target.parentElement;
+      if (parent) {
+        parent.innerHTML = `<div class="w-7 h-7 bg-white/20 rounded flex items-center justify-center text-xs font-bold">${alt.slice(0, 2).toUpperCase()}</div>`;
+      }
+    }}
+  />
 );
 
-// Custom Water Drop for hydro power
-const WaterDrop = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12 2c-4.97 4.97-8 9.03-8 14 0 4.418 3.582 8 8 8s8-3.582 8-8c0-4.97-3.03-9.03-8-14z"/>
-  </svg>
-);
-
-interface Experience {
+type Experience = {
   company: string;
   role: string;
   period: string;
@@ -25,16 +29,17 @@ interface Experience {
   tech: string[];
   color: string;
   icon: React.ReactNode;
-}
+};
 
-interface Project {
+type Project = {
   name: string;
   description: string;
   tech: string[];
   date: string;
   color: string;
   icon: React.ReactNode;
-}
+  github?: string;
+};
 
 interface Research {
   title: string;
@@ -42,8 +47,8 @@ interface Research {
   period: string;
   description: string;
   impact: string;
-  tech: string[];
   color: string;
+  link?: string;
 }
 
 interface SkillGroup {
@@ -55,6 +60,7 @@ interface SkillGroup {
 const ResumeSite = () => {
   const [activeSection, setActiveSection] = useState('hero');
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [lastUpdatedMousePosition, setLastUpdatedMousePosition] = useState({ x: 0, y: 0 });
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -62,7 +68,20 @@ const ResumeSite = () => {
     setIsClient(true);
 
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+      const currentX = e.clientX;
+      const currentY = e.clientY;
+
+      const distance = Math.sqrt(
+        Math.pow(currentX - lastUpdatedMousePosition.x, 2) +
+        Math.pow(currentY - lastUpdatedMousePosition.y, 2)
+      );
+
+      const threshold = 50; // Adjust this value as needed
+
+      if (distance > threshold) {
+        setMousePosition({ x: currentX, y: currentY });
+        setLastUpdatedMousePosition({ x: currentX, y: currentY });
+      }
     };
 
     const handleScroll = () => {
@@ -97,7 +116,7 @@ const ResumeSite = () => {
       description: "Implemented tooling and services support for dynamic future silicon simulator configuration for restore and boot",
       tech: ["C++", "System Programming", "iOS", "CoreOS"],
       color: "from-gray-600 to-black",
-      icon: <AppleLogo className="w-7 h-7 text-white" />
+      icon: <CompanyLogo src="/logos/apple.png" alt="Apple" className="w-7 h-7 text-white" />
     },
     {
       company: "Vortex Hydro Power",
@@ -106,7 +125,7 @@ const ResumeSite = () => {
       description: "Designed power take-off system configurations and achieved 60% power increase with regenerative braking system using VESC",
       tech: ["Arduino", "C++", "Robotics", "VESC", "Power Systems"],
       color: "from-blue-500 to-cyan-500",
-      icon: <WaterDrop className="w-7 h-7 text-white" />
+      icon: <CompanyLogo src="/logos/vortex-hydro-power.svg" alt="Vortex Hydro Power" className="w-7 h-7" />
     },
     {
       company: "Vortex Hydro Power",
@@ -115,7 +134,7 @@ const ResumeSite = () => {
       description: "Designed GUI with Tkinter integrated with LCM for real-time monitoring of electrical parameters",
       tech: ["Python", "Tkinter", "LCM", "GUI", "Real-time Systems"],
       color: "from-green-500 to-teal-500",
-      icon: <Code className="w-7 h-7 text-white" />
+      icon: <CompanyLogo src="/logos/vortex-hydro-power.svg" alt="Vortex Hydro Power" className="w-7 h-7" />
     },
     {
       company: "University of Michigan",
@@ -124,28 +143,55 @@ const ResumeSite = () => {
       description: "Developed marine hydrokinetic energy harvester using flow-induced oscillations that mimic fish undulations",
       tech: ["MATLAB", "Fluid Dynamics", "Energy Systems", "Research"],
       color: "from-purple-500 to-indigo-500",
-      icon: <School className="w-7 h-7 text-white" />
+      icon: <CompanyLogo src="/logos/university-of-michigan.png" alt="University of Michigan" className="w-7 h-7" />
     }
   ];
 
   const research: Research[] = [
     {
-      title: "Marine Hydrokinetic Energy Harvester with Multiple VIVACE Oscillators in Synergy",
-      type: "Patent Filed",
-      period: "January 2023",
-      description: "Filed provisional patent for novel marine energy harvesting system utilizing multiple Vortex Induced Vibration Aquatic Clean Energy (VIVACE) oscillators working in synergy to maximize power extraction from slow ocean/river currents.",
-      impact: "Patent Disclosure #2022-268 with University of Michigan",
-      tech: ["Fluid Dynamics", "VIVACE", "Marine Engineering", "Energy Harvesting"],
-      color: "from-emerald-500 to-teal-500"
+      title: "Experimental investigation on synergistic flow-induced oscillation of three rough tandem-cylinders in hydrokinetic energy conversion",
+      type: "Article",
+      period: "April 2024",
+      description: "Harnessing hydrokinetic energy via FIO of three rough tandem cylinders; experiments varied spacing, damping, stiffness, and Reynolds number.",
+      impact: "Achieved 75% of Betz limit for converted power. Galloping harnessed power 3-4 times greater than VIV. Three cylinders harnessed 3.4 to 26.4 times the power of a single isolated cylinder.",
+      color: "from-blue-500 to-cyan-500",
+      link: "https://www.researchgate.net/scientific-contributions/Christopher-Bernitsas-2186067858"
     },
     {
-      title: "VIVACE Converter Energy Optimization",
+      title: "Three Cylinders with Large Turbulence Stimulation in Flow Induced Oscillations (VIV & Galloping): Experimental Data",
+      type: "Technical Report",
+      period: "January 2023",
+      description: "Investigates FIO (VIV & galloping) in three cylinders with large turbulence stimulation, exploring PTC application and mechanical power analysis.",
+      impact: "Relevant to VIVACE converter for hydrokinetic energy harnessing. PTC enhances FIO and broadens high-response flow speed range.",
+      color: "from-green-500 to-teal-500",
+      link: "https://www.researchgate.net/scientific-contributions/Christopher-Bernitsas-2186067858"
+    },
+    {
+      title: "Effect of Obesity on Retinal Integrity in African Americans and Caucasian Americans With Relapsing Multiple Sclerosis",
+      type: "Article",
+      period: "November 2021",
+      description: "Investigates obesity's impact on retinal structures in RRMS patients (AAs vs. CAs) using OCT to measure retinal parameters.",
+      impact: "Obesity is associated with retinal structural abnormalities in RRMS patients, with a potentially more pronounced impact in African Americans. Large longitudinal studies are needed for validation.",
+      color: "from-purple-500 to-indigo-500",
+      link: "https://www.researchgate.net/scientific-contributions/Christopher-Bernitsas-2186067858"
+    },
+    {
+      title: "Synergistic Flow-Induced Oscillation of Multiple Cylinders in Harvesting Marine Hydrokinetic Energy",
+      type: "Patent Filed",
+      period: "January 2023",
+      description: "Filed provisional patent for novel marine energy harvesting system using multiple VIVACE oscillators for maximum power extraction from slow currents.",
+      impact: "Patent Disclosure #2022-268 with University of Michigan - Addresses critical need for renewable energy extraction from low-velocity water currents",
+      color: "from-emerald-500 to-teal-500",
+      link: "https://www.researchgate.net/scientific-contributions/Christopher-Bernitsas-2186067858"
+    },
+    {
+      title: "Hydrokinetic Power Conversion Using Vortex-Induced Oscillation with Cubic Restoring Force",
       type: "Research Publication",
-      period: "2017 - 2022",
-      description: "Investigated flow-induced oscillations (FIO) that enhance vortex-induced vibrations to harness hydrokinetic energy from marine currents. Research focused on optimizing power take-off systems and achieving maximum energy conversion efficiency.",
-      impact: "Published findings in academic journals with focus on sustainable marine energy solutions",
-      tech: ["Vortex-Induced Vibrations", "Hydrokinetic Energy", "Marine Structures", "Flow Dynamics"],
-      color: "from-blue-500 to-indigo-500"
+      period: "June 2020",
+      description: "Co-authored research on cubic-spring restoring function to improve marine hydrokinetic power harvesting via vortex-induced vibrations.",
+      impact: "Published research contributing to advancement of marine renewable energy technology and VIVACE converter optimization",
+      color: "from-blue-500 to-indigo-500",
+      link: "https://www.researchgate.net/scientific-contributions/Christopher-Bernitsas-2186067858"
     }
   ];
 
@@ -156,53 +202,52 @@ const ResumeSite = () => {
       tech: ["PyTorch", "OpenCV", "NumPy", "Computer Vision", "Deep Learning"],
       date: "Aug 2024",
       color: "from-purple-500 to-pink-500",
-      icon: <Eye className="w-6 h-6 text-white" />
+      icon: <Eye className="w-6 h-6 text-white" />,
+      github: "https://github.com/ChrisBernitsas"
     },
     {
       name: "EyeSpy",
       description: "Real-time object detection using modified YOLO model integrated with public cameras across the US for event searching",
-      tech: ["Flask", "MongoDB", "PyTorch", "YOLO", "OpenCV", "Web Scraping"],
+      tech: ["Flask", "MongoDB", "PyTorch", "YOLO", "OpenCV"],
       date: "Jul 2024 - Present",
       color: "from-red-500 to-orange-500",
-      icon: <Eye className="w-6 h-6 text-white" />
+      icon: <Eye className="w-6 h-6 text-white" />,
+      github: "https://github.com/ChrisBernitsas"
     },
     {
       name: "Freight Route Optimization",
       description: "End-to-end logistics optimization system with algorithmic route optimization using multiple APIs for real-time adjustments",
-      tech: ["Flutter", "Dart", "Flask", "Google Maps API", "Weather API"],
+      tech: ["Flutter", "Dart", "Flask", "Google Maps API", "API Integration"],
       date: "Feb 2024",
       color: "from-indigo-500 to-blue-500",
-      icon: <Truck className="w-6 h-6 text-white" />
+      icon: <Truck className="w-6 h-6 text-white" />,
+      github: "https://github.com/ChrisBernitsas"
     },
     {
       name: "Advanced Sudoku Engine",
       description: "Created comprehensive Sudoku game with multiple challenging variations, custom board generation algorithm, and AI solver using backtracking",
-      tech: ["Python", "OOP", "MVC", "Algorithm Design", "Game Development"],
+      tech: ["Python", "OOP", "MVC", "Algorithm Design"],
       date: "Nov-Dec 2022",
       color: "from-green-500 to-cyan-500",
-      icon: <Puzzle className="w-6 h-6 text-white" />
+      icon: <Puzzle className="w-6 h-6 text-white" />,
+      github: "https://github.com/ChrisBernitsas"
     }
   ];
 
   const skills: SkillGroup[] = [
-    { 
-      category: "Programming Languages", 
-      items: ["Python", "C/C++", "JavaScript/TypeScript", "SystemVerilog", "x86 Assembly", "Standard ML/OCaml"],
+    {
+      category: "Programming Languages",
+      items: ["Python", "C/C++", "SystemVerilog", "x86 Assembly", "Standard ML/OCaml"],
       icon: <Code className="w-5 h-5" />
     },
-    { 
-      category: "Frontend Development", 
-      items: ["React", "Next.js", "HTML/CSS", "Tailwind CSS", "Flutter", "Dart"],
-      icon: <Cpu className="w-5 h-5" />
-    },
-    { 
-      category: "Backend & Databases", 
+    {
+      category: "Backend & Databases",
       items: ["Node.js", "Flask", "MongoDB", "REST APIs", "LCM"],
       icon: <Briefcase className="w-5 h-5" />
     },
-    { 
-      category: "AI/ML & Tools", 
-      items: ["PyTorch", "OpenCV", "NumPy", "MATLAB", "TensorFlow", "Computer Vision"],
+    {
+      category: "AI/ML & Tools",
+      items: ["PyTorch", "OpenCV", "NumPy", "MATLAB", "Computer Vision"],
       icon: <Lightbulb className="w-5 h-5" />
     }
   ];
@@ -297,17 +342,14 @@ const ResumeSite = () => {
               Electrical & Computer Engineering Student
             </h2>
             <p className="text-xl text-slate-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-              Carnegie Mellon University • Apple Intern • Marine Energy Researcher • AI/ML Developer
+                            Carnegie Mellon University • Apple Intern • Software Engineer
             </p>
             <div className="flex flex-wrap justify-center gap-4 mb-12">
               <a href="mailto:cbernits@andrew.cmu.edu" className="flex items-center space-x-3 bg-gradient-to-r from-slate-800 to-slate-700 hover:from-blue-600 hover:to-blue-500 px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-2xl border border-slate-600 hover:border-blue-400">
                 <Mail size={22} />
                 <span className="font-medium">Email</span>
               </a>
-              <a href="tel:(734)205-7634" className="flex items-center space-x-3 bg-gradient-to-r from-slate-800 to-slate-700 hover:from-green-600 hover:to-green-500 px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-2xl border border-slate-600 hover:border-green-400">
-                <Phone size={22} />
-                <span className="font-medium">Call</span>
-              </a>
+              
               <a href="https://linkedin.com/in/Christopher-Bernitsas" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-3 bg-gradient-to-r from-slate-800 to-slate-700 hover:from-blue-700 hover:to-blue-600 px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-2xl border border-slate-600 hover:border-blue-400">
                 <Linkedin size={22} />
                 <span className="font-medium">LinkedIn</span>
@@ -342,7 +384,7 @@ const ResumeSite = () => {
                 <p className="text-slate-200 text-lg mb-2">Bachelor of Science in Electrical and Computer Engineering</p>
                 <p className="text-slate-400 text-lg">Expected Graduation: May 2026</p>
                 <div className="mt-6 p-4 bg-slate-700/30 rounded-2xl">
-                  <p className="text-slate-300"><strong>Relevant Courses:</strong> Computer Systems, Digital Systems, Signals & Systems, Functional Programming, Data Structures</p>
+                  <p className="text-slate-300"><strong>Relevant Courses:</strong> Computer Systems (C, x86), Embedded Systems, ML for Engineers (Numpy, Python), HW/SW Interface (C, Python), Digital Systems (SystemVerilog), Signals & Systems, Functional Programming (SML), Data Structures (C)</p>
                 </div>
               </div>
             </div>
@@ -417,16 +459,21 @@ const ResumeSite = () => {
           </div>
           <div className="grid md:grid-cols-1 gap-8">
             {research.map((item, index) => (
-              <div key={index} className="group cursor-pointer">
-                <div className="bg-slate-800/40 backdrop-blur-sm rounded-3xl p-8 border border-slate-700/50 hover:border-emerald-500/50 transition-all duration-500 transform hover:scale-[1.02] hover:shadow-2xl">
+              <div key={index} className="group cursor-pointer" onClick={() => item.link && window.open(item.link, '_blank')}>
+                <div className={`bg-slate-800/40 backdrop-blur-sm rounded-3xl p-8 border border-slate-700/50 hover:border-emerald-500/50 transition-all duration-500 transform hover:scale-[1.02] hover:shadow-2xl ${item.link ? 'cursor-pointer' : ''}`}>
                   <div className="flex items-start mb-6">
                     <div className={`p-4 rounded-xl bg-gradient-to-r ${item.color} mr-6 flex-shrink-0`}>
                       <FileText className="w-8 h-8 text-white" />
                     </div>
                     <div className="flex-1">
                       <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start mb-4">
-                        <div>
-                          <h3 className="text-2xl font-bold text-white mb-2">{item.title}</h3>
+                        <div className="flex-1">
+                          <div className="flex items-start justify-between">
+                            <h3 className="text-2xl font-bold text-white mb-2 flex-1">{item.title}</h3>
+                            {item.link && (
+                              <ExternalLink className="w-5 h-5 text-slate-400 hover:text-emerald-400 transition-colors ml-4 flex-shrink-0" />
+                            )}
+                          </div>
                           <div className="flex items-center space-x-4 mb-4">
                             <span className="bg-emerald-600 text-white px-3 py-1 rounded-full text-sm font-medium">{item.type}</span>
                             <span className="text-slate-400 flex items-center"><Calendar size={16} className="mr-2" />{item.period}</span>
@@ -437,13 +484,6 @@ const ResumeSite = () => {
                       <div className="bg-slate-700/30 rounded-2xl p-4 mb-4">
                         <p className="text-emerald-300 font-medium"><strong>Impact:</strong> {item.impact}</p>
                       </div>
-                      <div className="flex flex-wrap gap-3">
-                        {item.tech.map((tech, techIndex) => (
-                          <span key={techIndex} className="bg-slate-700/50 text-emerald-300 px-4 py-2 rounded-full text-sm font-medium border border-slate-600 hover:border-emerald-400 transition-colors">
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -451,9 +491,9 @@ const ResumeSite = () => {
             ))}
           </div>
           <div className="text-center mt-12">
-            <a href="https://www.researchgate.net/scientific-contributions/Christopher-Bernitsas-2186067858" target="_blank" rel="noopener noreferrer" className="inline-flex items-center space-x-3 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-2xl text-white font-semibold">
+            <a href="https://www.researchgate.net/scientific-contributions/Christopher-Bernitsas-2186067858" target="_blank" rel="noopener noreferrer" className="inline-flex items-center space-x-3 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-2xl text-white font-semibold relative z-10">
               <ExternalLink size={20} />
-              <span>View Full Research Profile</span>
+              <span>View Full Publications</span>
             </a>
           </div>
         </div>
@@ -470,25 +510,29 @@ const ResumeSite = () => {
           </div>
           <div className="grid md:grid-cols-2 gap-8">
             {projects.map((project, index) => (
-              <div key={index} className="group cursor-pointer">
+              <div key={index} className="group">
                 <div className="bg-slate-800/40 backdrop-blur-sm rounded-3xl p-8 border border-slate-700/50 hover:border-purple-500/50 transition-all duration-500 transform hover:scale-105 hover:shadow-2xl h-full">
                   <div className="flex items-center mb-6">
-                    <div className={`p-4 rounded-xl bg-gradient-to-r ${project.color} mr-4 flex items-center justify-center`}>
-                      {project.icon}
-                    </div>
+                    
                     <div>
                       <h3 className="text-2xl font-bold text-white">{project.name}</h3>
                       <p className="text-slate-400 text-sm mt-1">{project.date}</p>
                     </div>
                   </div>
                   <p className="text-slate-200 mb-6 leading-relaxed text-lg">{project.description}</p>
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-3 mb-6">
                     {project.tech.map((tech, techIndex) => (
                       <span key={techIndex} className="bg-slate-700/50 text-purple-300 px-3 py-2 rounded-full text-sm font-medium border border-slate-600 hover:border-purple-400 transition-colors">
                         {tech}
                       </span>
                     ))}
                   </div>
+                  {project.github && (
+                    <a href={project.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center space-x-2 text-purple-300 hover:text-purple-200 transition-colors">
+                      <Github size={18} />
+                      <span>View on GitHub</span>
+                    </a>
+                  )}
                 </div>
               </div>
             ))}
@@ -528,7 +572,7 @@ const ResumeSite = () => {
       </section>
 
       {/* Enhanced Footer */}
-      <footer className="py-16 px-6 border-t border-slate-700/50 bg-slate-900/50">
+      <footer className="py-16 px-6 border-t border-slate-700/50 bg-slate-900/50 relative z-10">
         <div className="max-w-6xl mx-auto text-center">
           <div className="flex justify-center space-x-8 mb-8">
             <a href="mailto:cbernits@andrew.cmu.edu" className="text-slate-400 hover:text-blue-400 transition-colors transform hover:scale-110">
@@ -545,9 +589,8 @@ const ResumeSite = () => {
             <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-4">
               Chris Bernitsas
             </h3>
-            <p className="text-slate-300 text-lg">Building the future through innovative engineering and research</p>
           </div>
-          <p className="text-slate-400 text-lg">© 2025 Chris Bernitsas. Built with Next.js & Tailwind CSS.</p>
+          
         </div>
       </footer>
     </div>
