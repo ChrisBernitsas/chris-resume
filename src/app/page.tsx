@@ -114,7 +114,7 @@ const ResumeSite = () => {
       role: "CoreOS Software Developer Intern",
       period: "May 2025 - August 2025",
       description: "Implemented tooling and services support for dynamic future silicon simulator configuration for restore and boot",
-      tech: ["C++", "System Programming", "iOS", "CoreOS"],
+      tech: ["Python", "APIs", "CoreOS"],
       color: "from-gray-600 to-black",
       icon: <CompanyLogo src="/logos/apple.png" alt="Apple" className="w-7 h-7 text-white" />
     },
@@ -123,7 +123,7 @@ const ResumeSite = () => {
       role: "Robotics Engineering Intern",
       period: "June 2024 - August 2024",
       description: "Designed power take-off system configurations and achieved 60% power increase with regenerative braking system using VESC",
-      tech: ["Arduino", "C++", "Robotics", "VESC", "Power Systems"],
+      tech: ["Arduino", "C++", "Circuits", "VESC", "Power Systems"],
       color: "from-blue-500 to-cyan-500",
       icon: <CompanyLogo src="/logos/vortex-hydro-power.svg" alt="Vortex Hydro Power" className="w-7 h-7" />
     },
@@ -132,7 +132,7 @@ const ResumeSite = () => {
       role: "Software Engineering Intern",
       period: "June 2023 - August 2023",
       description: "Designed GUI with Tkinter integrated with LCM for real-time monitoring of electrical parameters",
-      tech: ["Python", "Tkinter", "LCM", "GUI", "Real-time Systems"],
+      tech: ["Rasberry Pi", "Tkinter", "LCM", "GUI", "Real-time Systems"],
       color: "from-green-500 to-teal-500",
       icon: <CompanyLogo src="/logos/vortex-hydro-power.svg" alt="Vortex Hydro Power" className="w-7 h-7" />
     },
